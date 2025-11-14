@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -12,18 +13,23 @@ import (
 	godevill "github.com/eva-native/go-devill"
 )
 
+var god = flag.String("god", "", "god name")
 var token = flag.String("token", "", "godville API token")
 
 func main() {
 	flag.Parse()
+	if *god == "" {
+		fmt.Println("god name is required")
+		flag.PrintDefaults()
+	}
 
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
-	defer stop()
-
-	godville, err := godevill.New("Tungrad", godevill.WithToken(*token))
+	godville, err := godevill.New(*god, godevill.WithToken(*token))
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
 
 	err = poll(ctx, godville)
 	if err != nil {
