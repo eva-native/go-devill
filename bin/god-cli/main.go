@@ -20,7 +20,8 @@ func main() {
 	flag.Parse()
 	if *god == "" {
 		fmt.Println("god name is required")
-		flag.PrintDefaults()
+		flag.Usage()
+		os.Exit(1)
 	}
 
 	godville, err := godevill.New(*god, godevill.WithToken(*token))
